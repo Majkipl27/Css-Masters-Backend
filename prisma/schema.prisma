@@ -14,6 +14,7 @@ model Users {
   passwordHash String
   username     String   @unique
   isVerified   Boolean  @default(false)
+  isBanned     Boolean  @default(false)
   avatar       Bytes?
   banner       Bytes?
   instagram    String?
