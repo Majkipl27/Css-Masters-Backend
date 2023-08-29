@@ -4,6 +4,8 @@ import { RegisterModule } from './register/register.module';
 import { LoginModule } from './login/login.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { AuthController } from './auth.controller';
 
 const { SECRET: secret = 'secret' } = process.env;
 @Module({
@@ -16,7 +18,8 @@ const { SECRET: secret = 'secret' } = process.env;
       signOptions: { expiresIn: 3600 * 24 * 30 },
     }),
   ],
-  providers: [AuthService],
-  exports: [AuthService],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

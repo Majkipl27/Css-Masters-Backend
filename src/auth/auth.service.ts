@@ -83,6 +83,10 @@ export class AuthService {
       },
     });
 
+    for (const [key, value] of Object.entries(userPublicInfo)) {
+      if (value === null) delete userPublicInfo[key];
+    }
+
     return userPublicInfo;
   }
 }
