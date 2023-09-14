@@ -13,14 +13,13 @@ model Users {
   email        String   @unique
   passwordHash String
   username     String   @unique
-  isVerified   Boolean  @default(false)
   isBanned     Boolean  @default(false)
   avatar       Bytes?
   banner       Bytes?
   instagram    String?
   website      String?
   github       String?
-  twitter      String?
+  x            String?
   description  String?
   name         String?
   lastname     String?
