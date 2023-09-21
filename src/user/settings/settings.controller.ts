@@ -44,10 +44,10 @@ export class SettingsController {
     files: { avatar: Express.Multer.File[]; banner: Express.Multer.File[] },
   ): Promise<void> {
     await this.settingsService.updateSettings(
-      files.banner[0],
-      files.avatar[0],
       user.userId,
       settings,
+      files?.banner ? files.banner[0] : null,
+      files?.avatar ? files.avatar[0] : null,
     );
   }
 

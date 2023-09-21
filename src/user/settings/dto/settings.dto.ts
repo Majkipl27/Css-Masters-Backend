@@ -1,27 +1,19 @@
 import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
 export class SettingsDto {
   @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsEmail()
-  email: string;
+  @IsOptional()
+  username?: string;
 
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   name?: string;
 
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   lastname?: string;
 
   @IsOptional()
@@ -38,5 +30,6 @@ export class SettingsDto {
   website?: string;
 
   @IsOptional()
+  @IsString()
   description?: string;
 }

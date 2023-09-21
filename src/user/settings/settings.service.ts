@@ -6,10 +6,10 @@ import { SettingsDto } from './dto/settings.dto';
 export class SettingsService {
   constructor(private readonly prisma: DbService) {}
   async updateSettings(
-    bannerFile: Express.Multer.File | undefined,
-    avatarFile: Express.Multer.File | undefined,
     userId: number,
     settings: SettingsDto,
+    bannerFile?: Express.Multer.File,
+    avatarFile?: Express.Multer.File,
   ): Promise<void> {
     if (avatarFile) await this.updateAvatar(avatarFile, userId);
     if (bannerFile) await this.updateBanner(bannerFile, userId);
@@ -17,7 +17,6 @@ export class SettingsService {
       where: { id: userId },
       data: {
         username: settings.username,
-        email: settings.email,
         name: settings.name,
         lastname: settings.lastname,
         x: settings.x,
@@ -43,7 +42,7 @@ export class SettingsService {
     bannerFile: Express.Multer.File,
     userId: number,
   ): Promise<void> {
-    let x = await this.prisma.users.update({
+    await this.prisma.users.update({
       where: { id: userId },
       data: { banner: bannerFile.buffer },
     });
