@@ -23,4 +23,45 @@ model Users {
   description  String?
   name         String?
   lastname     String?
+  scores       Scores[]
+}
+
+model Playlists {
+  id                Int          @id @default(autoincrement())
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  name              String
+  image             String?
+  additionalComment String?
+  description       String?
+  author            String       @default("CSS Masters")
+  isOfficial        Boolean      @default(false)
+  Challenges        Challenges[]
+  difficulty        String?      @default("rookie")
+}
+
+model Challenges {
+  id                    Int       @id @default(autoincrement())
+  challengeInPlaylistId Int       @default(1)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  challangeImageUrl     String
+  colors                String
+  name                  String
+  playlist              Playlists @relation(fields: [playlistId], references: [id])
+  playlistId            Int
+  startingScore         Int
+  scores                Scores[]
+  author                String    @default("CSS Masters")
+}
+
+model Scores {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  score       Float
+  user        Users      @relation(fields: [userId], references: [id])
+  userId      Int
+  challenge   Challenges @relation(fields: [challengeId], references: [id])
+  challengeId Int
+  code        String
 }
