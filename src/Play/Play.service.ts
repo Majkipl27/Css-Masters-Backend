@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
-import { SubmitDto } from './dto/Submit.dto';
+import { SubmitDto } from './dto/submit.dto';
 
 @Injectable()
 export class PlayService {

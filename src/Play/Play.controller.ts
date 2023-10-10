@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { PlayService } from './Play.service';
 import { JwtAuthDto } from 'src/auth/dto/jwt-auth.dto';
 import { GetUser } from 'src/auth/decorator/getUser.decorator';
-import { SubmitDto } from './dto/Submit.dto';
+import { SubmitDto } from './dto/submit.dto';
 import * as resemble from 'resemblejs';
 import puppeteer from 'puppeteer';
 
