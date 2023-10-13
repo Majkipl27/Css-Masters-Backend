@@ -37,16 +37,43 @@ export class PlayService {
       },
     });
 
-    await this.prisma.scores.create({
-      data: {
-        score: score,
-        code: data.code,
+    const bestScore = await this.prisma.scores.findFirst({
+      where: {
+        challenge: {
+          playlistId: data.playlistId,
+          challengeInPlaylistId: data.challengeId,
+        },
         userId: userId,
-        challengeId: challenge.id,
+      },
+      select: {
+        id: true,
+        score: true,
+      },
+      orderBy: {
+        score: 'desc',
       },
     });
 
-    this.deleteAdditionalScores(userId);
+    if (bestScore && bestScore.score < score) {
+      await this.prisma.scores.update({
+        where: {
+          id: bestScore.id,
+        },
+        data: {
+          score: score,
+          code: data.code,
+        },
+      });
+    } else if (!bestScore) {
+      await this.prisma.scores.create({
+        data: {
+          score: score,
+          code: data.code,
+          userId: userId,
+          challengeId: challenge.id,
+        },
+      });
+    }
   }
 
   async getTopScores(playlistId: number, challengeId: number): Promise<any> {
@@ -159,31 +186,6 @@ export class PlayService {
     return userScore ? (limit ? userScore.slice(0, limit) : userScore[0]) : {};
   }
 
-  async deleteAdditionalScores(userId: number): Promise<void> {
-    const scores = await this.prisma.scores.findMany({
-      where: {
-        userId: userId,
-      },
-      select: {
-        id: true,
-        createdAt: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    if (scores.length > 5) {
-      const ids = scores.slice(5).map((score: any) => score.id);
-      await this.prisma.scores.deleteMany({
-        where: {
-          id: {
-            in: ids,
-          },
-        },
-      });
-    }
-  }
 
   async getChallenge(playlistId: number, challengeId: number): Promise<any> {
     const challenge = await this.prisma.challenges.findFirst({
