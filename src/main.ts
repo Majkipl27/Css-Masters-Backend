@@ -2,6 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+dotenv.config();
+const { PORT = 5000 } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +26,6 @@ async function bootstrap() {
     ],
     credentials: true,
   });
-  await app.listen(5000);
+  await app.listen(PORT);
 }
 bootstrap();
