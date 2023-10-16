@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: self-hosted
+    strategy:
+      max-parallel: 4
+      matrix:
+        node-version: [18.x] 
+        
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: pnpm i
+    - name: Create .env
+    - name: Build project
+      run: pnpm build:prod
+    - name: Restart service
+    - run: pm2 restart Css-Masters-Backend
