@@ -22,7 +22,8 @@ jobs:
     - name: Install dependencies
       run: pnpm i
     - name: Create .env
+      run: echo "${{ secrets.ENV_PRODUCTION }}" > .env
     - name: Build project
       run: pnpm build:prod
     - name: Restart service
-    - run: pm2 restart Css-Masters-Backend
+      run: pm2 restart Css-Masters-Backend
