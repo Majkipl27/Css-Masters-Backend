@@ -28,11 +28,13 @@
         res.cookie(...jwt);
         res.cookie(
           'user_info',
-          JSON.stringify(await this.authService.getUserPublicInfo(dto.username)),
+          JSON.stringify(
+            await this.authService.getUserPublicInfo(dto.username),
+          ),
           {
             domain: this.configService.get<string>(
               'COOKIE_DOMAIN',
-              'localhost',
+              this.configService.get<string>('DOMAIN'),
             ),
             secure: true,
             sameSite: 'lax',

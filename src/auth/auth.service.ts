@@ -56,7 +56,10 @@ export class AuthService {
       'jwt',
       jwt,
       {
-        domain: this.configService.get<string>('COOKIE_DOMAIN', 'localhost'),
+        domain: this.configService.get<string>(
+          'COOKIE_DOMAIN',
+          this.configService.get<string>('DOMAIN'),
+        ),
         secure: true,
         sameSite: 'lax',
       },
