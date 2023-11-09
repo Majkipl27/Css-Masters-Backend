@@ -92,20 +92,25 @@ export class LeaderboardsService {
   }
 
   async getUserPlace(userId: number) {
-    let { summedScores, summedChallengesCompleted } =
+    const { summedScores, summedChallengesCompleted } =
       await this.getLeaderboards();
 
-    let userScorePlace = summedScores.findIndex(
-      (score) => score.userId === userId,
-    ) + 1;
+    const userScorePlace =
+      summedScores.findIndex((score) => score.userId === userId) + 1;
 
-    let userChallangesPlace = summedChallengesCompleted.findIndex(
-      (score) => score.userId === userId,
-    ) + 1;
+    const userChallangesPlace =
+      summedChallengesCompleted.findIndex((score) => score.userId === userId) +
+      1;
+
+    let pom = summedChallengesCompleted[userChallangesPlace - 1];
 
     return {
       userScorePlace,
-      userChallangesPlace,
+      //@ts-ignore
+      userScore: summedScores[userScorePlace - 1].score,
+      userChallangesPlace: userChallangesPlace,
+      // @ts-ignore
+      userChallangesCompleted: pom.totalChallengesCompleted,
     };
   }
 }
