@@ -140,7 +140,6 @@ export class PlayController {
       user.userId,
       playlistId,
       challengeId,
-      1,
     );
     return userScore;
   }

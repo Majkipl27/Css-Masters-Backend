@@ -67,7 +67,7 @@ export class SettingsService {
 
   async getAvatar(userId: number): Promise<Buffer | null> {
     return this.prisma.users
-      .findUniqueOrThrow({
+      .findUnique({
         where: { id: userId },
         select: { avatar: true },
       })
@@ -76,7 +76,7 @@ export class SettingsService {
 
   async getBanner(userId: number): Promise<Buffer | null> {
     return this.prisma.users
-      .findUniqueOrThrow({
+      .findUnique({
         where: { id: userId },
         select: { banner: true },
       })

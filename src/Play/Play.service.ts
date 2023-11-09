@@ -158,9 +158,8 @@ export class PlayService {
     userId: number,
     playlistId: number,
     challengeId: number,
-    limit?: number,
   ): Promise<any> {
-    const userScore = await this.prisma.scores.findMany({
+    const userScore = await this.prisma.scores.findFirst({
       where: {
         userId: userId,
         challenge: {
@@ -183,7 +182,7 @@ export class PlayService {
       ],
     });
 
-    return userScore ? (limit ? userScore.slice(0, limit) : userScore[0]) : {};
+    return userScore ? userScore : {};
   }
 
 

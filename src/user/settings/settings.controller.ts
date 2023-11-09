@@ -70,6 +70,7 @@ export class SettingsController {
       response.send();
       return;
     }
+    
     response.send(image);
   }
 

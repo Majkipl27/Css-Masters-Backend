@@ -11,7 +11,8 @@ export class UserService {
         id,
       },
     });
-    delete (await user).passwordHash;
-    return user;
+
+    if (user) delete (await user).passwordHash;
+    return user || { error: 'User not found' };
   }
 }
