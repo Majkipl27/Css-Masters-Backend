@@ -32,6 +32,7 @@ export class LeaderboardsService {
 
     summedScores.forEach((score) => {
       const user = scores.find((user) => user.id === score.userId);
+      delete user.id;
       Object.assign(score, score._sum);
       delete score._sum;
       Object.assign(score, user);
