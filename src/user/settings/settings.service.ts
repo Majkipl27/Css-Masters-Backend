@@ -1,31 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from '../../db/db.service';
 import { SettingsDto } from './dto/settings.dto';
+import { BadgesService } from 'src/badges/badges.service';
 
 @Injectable()
 export class SettingsService {
-  constructor(private readonly prisma: DbService) {}
+  constructor(private readonly prisma: DbService, private readonly badgesService: BadgesService) {}
   async updateSettings(
     userId: number,
     settings: SettingsDto,
     bannerFile?: Express.Multer.File,
     avatarFile?: Express.Multer.File,
-  ): Promise<void> {
+  ): Promise<boolean> {
     if (avatarFile) await this.updateAvatar(avatarFile, userId);
     if (bannerFile) await this.updateBanner(bannerFile, userId);
     await this.prisma.users.update({
       where: { id: userId },
       data: {
-        username: settings.username,
-        name: settings.name,
-        lastname: settings.lastname,
-        x: settings.x,
-        instagram: settings.instagram,
-        github: settings.github,
-        website: settings.website,
-        description: settings.description,
+        username: settings.username || "",
+        name: settings.name || "",
+        lastname: settings.lastname || "",
+        x: settings.x || "",
+        instagram: settings.instagram || "",
+        github: settings.github || "",
+        website: settings.website || "",
+        description: settings.description || "",
       },
     });
+
+    return this.badgesService.giveBadge(userId, 1);
   }
 
   async updateAvatar(

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { PlayService } from './Play.service';
 import { JwtAuthDto } from 'src/auth/dto/jwt-auth.dto';
@@ -6,18 +14,22 @@ import { GetUser } from 'src/auth/decorator/getUser.decorator';
 import { SubmitDto } from './dto/submit.dto';
 import * as resemble from 'resemblejs';
 import puppeteer from 'puppeteer';
-
-let browser;
+import { Response } from 'express';
+import { BadgesService } from 'src/badges/badges.service';
 
 @Controller('play')
 export class PlayController {
-  constructor(private readonly playService: PlayService) {}
+  constructor(
+    private readonly playService: PlayService,
+    private readonly badgesService: BadgesService,
+  ) {}
 
   @Post('submit')
   @UseGuards(AuthGuard('jwt'))
   async submitScore(
     @GetUser() user: JwtAuthDto,
     @Body() data: SubmitDto,
+    @Res() response: Response,
   ): Promise<{ score: number; misMatchPercentage: number }> {
     const startingData = await this.playService.getStartingData(
       data.challengeId,
@@ -34,6 +46,12 @@ export class PlayController {
       startingData.imageUrl,
     );
 
+    const wereBadgesAdded = await this.badgesService.givePlayBadges(
+      user.userId,
+      +misMatchPercentage,
+      data.playlistId,
+    );
+
     const score = this.calculateScore(
       startingData.startingScore,
       codeFormatted.length,
@@ -42,14 +60,24 @@ export class PlayController {
 
     await this.playService.submitScore(user.userId, data, score);
 
+    response.status(wereBadgesAdded ? 201 : 200).json({
+      statusCode: wereBadgesAdded ? 201 : 200,
+      data: {
+        score,
+        misMatchPercentage,
+        message: wereBadgesAdded ? 'Badge unlocked' : null,
+      },
+    });
+    response.send();
+
     return { score, misMatchPercentage };
   }
 
   private async captureScreenshot(code: string): Promise<Buffer> {
-    if (!browser)
-      browser = await puppeteer.launch({
-        headless: 'new',
-      });
+    let browser = await puppeteer.launch({
+      headless: 'new',
+    });
+
     const page = await browser.newPage();
     await page.setViewport({ width: 400, height: 300 });
     await page.setContent(
@@ -58,6 +86,7 @@ export class PlayController {
         '</html>',
     );
     const screenshotBuffer = await page.screenshot();
+    await browser.close();
     return screenshotBuffer;
   }
 
@@ -151,9 +180,7 @@ export class PlayController {
   }
 
   @Get('/playlists/:playlistId')
-  async getPlaylist(
-    @Param('playlistId') playlistId: number,
-  ): Promise<any> {
+  async getPlaylist(@Param('playlistId') playlistId: number): Promise<any> {
     const playlist = await this.playService.getPlaylist(playlistId);
     return playlist;
   }

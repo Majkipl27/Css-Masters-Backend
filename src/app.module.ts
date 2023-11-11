@@ -6,6 +6,7 @@ import { SearchModule } from './search/search.module';
 import { UserModule } from './user/user.module';
 import { PlayModule } from './Play/Play.module';
 import { LeaderboardsModule } from './leaderboards/leaderboards.module';
+import { BadgesModule } from './badges/badges.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LeaderboardsModule } from './leaderboards/leaderboards.module';
     UserModule,
     PlayModule,
     LeaderboardsModule,
+    BadgesModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

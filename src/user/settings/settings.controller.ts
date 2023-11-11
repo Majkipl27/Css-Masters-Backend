@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -26,7 +25,6 @@ export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
   @Patch()
-  @HttpCode(HttpStatus.NO_CONTENT)
   @UseInterceptors(
     FileFieldsInterceptor(
       [
@@ -40,15 +38,23 @@ export class SettingsController {
   async updateSettings(
     @Body() settings: SettingsDto,
     @GetUser() user: JwtAuthDto,
+    @Res() response: Response,
     @UploadedFiles()
     files: { avatar: Express.Multer.File[]; banner: Express.Multer.File[] },
   ): Promise<void> {
-    await this.settingsService.updateSettings(
+    const wasBadgeAdded = await this.settingsService.updateSettings(
       user.userId,
       settings,
       files?.banner ? files.banner[0] : null,
       files?.avatar ? files.avatar[0] : null,
     );
+
+    response.status(wasBadgeAdded ? 201 : 200).json({
+      statusCode: wasBadgeAdded ? 201 : 200,
+      data: wasBadgeAdded ? 'Badge unlocked' : null,
+    });
+
+    response.send();
   }
 
   @Get('get')
@@ -70,7 +76,7 @@ export class SettingsController {
       response.send();
       return;
     }
-    
+
     response.send(image);
   }
 
